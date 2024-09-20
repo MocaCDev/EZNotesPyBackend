@@ -13,7 +13,8 @@ import subprocess
 import sys
 import os
 
-PATH = '/Users/aidanwhite/EZNotes_Data/EZNotes_data.yaml'
+USER = os.path.expanduser('~/')
+PATH = os.path.join(USER, 'EZNotes_Data/EZNotes_data.yaml')#'/Users/aidanwhite/EZNotes_Data/EZNotes_data.yaml'
 
 if len(sys.argv) < 2:
     sys.exit(0)
@@ -95,16 +96,8 @@ if sys.argv[1] == '--remove_eznotes_data':
     sys.stdout.write('good')
     sys.exit(0)
 
-# We should probably try and do this via the C++ backend in QT instead of via Python..
-# TODO: Make the above statement possible lol
-if sys.argv[1] == '--rerun':
-    subprocess.call(
-        [
-            '/usr/bin/open',
-            "-W", "-n", "-a",
-            "/Users/aidanwhite/EZNotes/build/Qt_6_8_0_for_macOS-Debug/appEZNotes.app"
-        ]
-    )#os.system('C:\qt_apps\\build-EZNotesSoftware-Desktop_Qt_6_6_1_MinGW_64_bit-Debug\\appEZNotesSoftware.exe')
+if sys.argv[1] == '--get_users_path':
+    sys.stdout.write(USER)
     sys.exit(0)
 
 # Ran if user deletes their account
