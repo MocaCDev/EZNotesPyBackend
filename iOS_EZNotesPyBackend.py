@@ -61,6 +61,17 @@ Format:
 """
 NOTES_PATH = os.path.join(USER, 'EZNotes_Data/EZNotes_Notes.json')
 
+# This will store all of the upload history
+"""
+Format:
+    {
+        "upload_history": [
+            <history>
+        ]
+    }
+"""
+UPLOAD_HISTORY_PATH = os.path.join(USER, 'EZNotes_Data/EZNotes_UploadHistory.json')
+
 if len(sys.argv) < 2:
     sys.exit(0)
 
@@ -68,6 +79,43 @@ def write_json_file(filepath, data: dict):
     with open(filepath, 'w') as file:
         file.write(dumps(data, indent=2))
         file.close()
+
+if sys.argv[1] == '--add_upload_history':
+    try:
+        d = sys.argv[2].split(',')
+
+        if not os.path.isfile(UPLOAD_HISTORY_PATH):
+            data = {
+                'upload_history': [
+                    i for i in d
+                ]
+            }
+        else:
+            data = loads(open(UPLOAD_HISTORY_PATH, 'r').read())
+
+            for i in d:
+                if not i in data['upload_history']:
+                    data['upload_history'].append(i)
+        
+        write_json_file(UPLOAD_HISTORY_PATH, data)
+        sys.exit(0)
+    except:
+        sys.exit(0)
+
+if sys.argv[1] == '--get_upload_history':
+    try:
+        if not os.path.isfile(UPLOAD_HISTORY_PATH):
+            sys.stdout.write('no_history_found')
+            sys.exit(0)
+        
+        data = loads(open(UPLOAD_HISTORY_PATH, 'r').read())
+        data = '\n'.join(data['upload_history'])
+
+        sys.stdout.write(data)
+        sys.exit(0)
+    except Exception as e:
+        sys.stdout.write('no_history_found')
+        sys.exit(0)
 
 # Operations for dealing with categories, sets and notes
 if sys.argv[1] == '--create_new_category':
@@ -99,7 +147,7 @@ if sys.argv[1] == '--attempt_get_categories':
         sys.exit(0)
 
     data = loads(open(CATEGORIES_PATH, 'r').read())
-    categories = '\n'.join([i for i in data['categories']])
+    categories = '\n'.join(data['categories'])
     
     sys.stdout.write(categories)
     sys.exit(0)
